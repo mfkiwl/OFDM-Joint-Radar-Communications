@@ -4,7 +4,7 @@ function [] = main ()
 K = 128;                    % # of subcarriers
 Rcom = 6;                   % channel length
 Rrad = 64;                  % # of range cells
-sigma = 1;                  % std.          (input SNR = 1)
+sigma = sqrt(1e-3);         % std.          (input SNR = 10^3)
 
 % Communication Channel
 hdB = zeros(K, 1);
@@ -12,9 +12,6 @@ hdB(1:Rcom, 1) = [-6.0 0.0 -7.0 -22.0 -16.0 -20.0];    % power profile
 h = zeros(K, 1);
 h(1:Rcom, 1) = 10.^(hdB(1:Rcom, 1)/10);
 H = fft(h);                                            % frequency response
-
-hrad = h(1:Rrad, 1);
-h_h = hrad * hrad';
 
 % Threshold
 SNRmin = 10.^(-30/10);                      % threshold SNR : -30dB
@@ -39,8 +36,9 @@ jdx = 0;
 z = y;
 
 iterations = zeros(0, 0);
-ZZZ = zeros(0, 0);
+Zplot = zeros(0, 0);
 SNRplot = zeros(0, 0);
+ERRORplot = zeros(0, 0);
 
 while true
     y = z;
@@ -56,13 +54,20 @@ while true
     
     SS = S' * S;
     
-    SNRrad = sum(diag(h_h) ./ diag(inv(SS)));
+    SNRrad = sum(1 ./ diag(inv(SS))) / Rrad;
     SNRraddB = 10 * log(SNRrad) / log(10);
+    
+    s = S(:,Rrad);
+    d = (1/K) * fft(s);
+    
+    SNRcom = abs(d).^2 .* abs(H).^2 / sigma^2;
+    ErrorP = sum(erfc(SNRcom ./ sqrt(2))) ./ K;
     
     jdx = jdx + 1;
     iterations = horzcat(iterations, jdx);
-    ZZZ = horzcat(ZZZ, z);
+    Zplot = horzcat(Zplot, z);
     SNRplot = horzcat(SNRplot, SNRraddB);
+    ERRORplot = horzcat(ERRORplot, ErrorP);
     
     if abs(z-y) < 1e-5      % stopping criterion
         break
@@ -71,7 +76,7 @@ while true
 end
 
 figure
-plot(iterations, ZZZ, 'LineWidth', 1.5);
+plot(iterations, Zplot, 'LineWidth', 1.5);
 xlabel('# of iterations');
 ylabel('Objective Function');
 title('Objective Function Convergence');
@@ -82,6 +87,13 @@ plot(iterations, SNRplot, 'LineWidth', 1.5);
 xlabel('# of iterations');
 ylabel('Radar SNR (dB)');
 title('Radar SNR Convergence');
+grid on
+
+figure
+plot(iterations, ERRORplot, 'LineWidth', 1.5);
+xlabel('# of iterations');
+ylabel('Error Probability');
+title('Error Probability Convergence');
 grid on
 
 figure
