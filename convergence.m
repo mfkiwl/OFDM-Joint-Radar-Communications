@@ -1,4 +1,4 @@
-function [] = main ()
+function [] = convergence ()
 
 iterations = cell(100, 1);
 Zplot = cell(100, 1);
@@ -53,7 +53,7 @@ title('Radar SNR Convergence');
 grid on
 
 figure
-plot(it, ERRORmean, 'LineWidth', 1.5);
+semilogy(it, ERRORmean, 'LineWidth', 1.5);
 xlabel('# of iterations');
 ylabel('Error Probability');
 title('Error Probability Convergence');

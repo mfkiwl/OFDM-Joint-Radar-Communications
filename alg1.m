@@ -1,4 +1,4 @@
-function [S] = alg1 (K, Rrad, rho, Q)
+function [S] = alg1 (SNRin, K, Rrad, rho, Q)
 
 P = zeros(K, Rrad);
 p = zeros(K, 1);
@@ -19,7 +19,7 @@ end
 % magnitude optimization
 x_abs = abs(x);
 x_norm = 1;
-d_norm = 1;
+d_norm = SNRin;
 remove_idx_array = zeros(0,0);
 d_abs = x_abs .* sqrt(d_norm / x_norm);
 while true
