@@ -20,7 +20,7 @@ rho = sigma * sqrt(SNRmin) ./ abs(H);       % threshold power of each subcarrier
 
 % Initialization
 d = randn(K, 1);
-d = d / norm(d);                % OFDM freq domain d = [d(0) d(1) ... d(K-1)]
+d = sqrt(SNRin) * d / norm(d);                % OFDM freq domain d = [d(0) d(1) ... d(K-1)]
 
 Rand = orth(randn(K, K));
 Q = sqrt(K)* sqrt(SNRin) * Rand(:, 1:Rrad);            % semiunitary matrix
