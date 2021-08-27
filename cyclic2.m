@@ -4,7 +4,7 @@ function [initSNR, SNRraddB, initErr, ErrorP] = cyclic2 (SNRin)
 K = 128;                        % # of subcarriers
 Rcom = 6;                       % channel length
 Rrad = 64;                      % # of range cells
-sigma = sqrt(1)/sqrt(K);     % std.
+sigma = sqrt(1)/sqrt(K);        % std.
 
 % Communication Channel
 hdB = zeros(K, 1);

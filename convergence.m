@@ -50,6 +50,7 @@ plot(it, SNRmean, 'LineWidth', 1.5);
 xlabel('# of iterations');
 ylabel('Radar SNR (dB)');
 title('Radar SNR Convergence');
+ylim([28 32]);
 grid on
 
 figure
@@ -57,6 +58,7 @@ semilogy(it, ERRORmean, 'LineWidth', 1.5);
 xlabel('# of iterations');
 ylabel('Error Probability');
 title('Error Probability Convergence');
+ylim([5e-4 1]);
 grid on
 
 figure
@@ -65,5 +67,5 @@ plot3(xx, yy, abs(SS{1}), 'LineWidth', 1.5);
 zlabel('|{S^H}S|')
 title('Diagonality of {S^H}S');
 grid on
-
+    
 end
