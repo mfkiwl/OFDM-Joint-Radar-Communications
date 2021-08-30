@@ -41,7 +41,6 @@ SNRplot = zeros(0, 0);
 ERRORplot = zeros(0, 0);
 
 while jdx < 500
-    y = z;
     % #1 : Obtain S given Q
     S = alg1 (SNRin, K, Rrad, rho, Q);
     

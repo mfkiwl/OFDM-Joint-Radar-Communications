@@ -3,12 +3,14 @@ function [] = convergence ()
 iterations = cell(100, 1);
 Zplot = cell(100, 1);
 SNRplot = cell(100, 1);
+SNRmaxplot = cell(100, 1);
 ERRORplot = cell(100, 1);
+ERRORplot2 = cell(100, 1);
 SS = cell(100, 1);
 iterations_len = zeros(100, 1);
 
 for idx = 1 : 100
-    [iterations{idx}, Zplot{idx}, SNRplot{idx}, ERRORplot{idx}, SS{idx}] = cyclic ();
+    [iterations{idx}, Zplot{idx}, SNRplot{idx}, SNRmaxplot{idx}, ERRORplot{idx}, ERRORplot2{idx}, SS{idx}] = cyclic ();
     iterations_len(idx, 1) = length(iterations{idx});
 end
 
@@ -21,22 +23,30 @@ end
 
 Zpl = zeros(100, min_len);
 SNRpl = zeros(100, min_len);
+SNRmaxpl = zeros(100, min_len);
 ERRORpl = zeros(100, min_len);
+ERRORpl2 = zeros(100, min_len);
 
 for kdx = 1 : 100
     ZZpl = Zplot{kdx, 1};
     SSNRpl = SNRplot{kdx, 1};
+    SSNRmaxpl = SNRmaxplot{kdx, 1};
     EERRORpl = ERRORplot{kdx, 1};
+    EERRORpl2 = ERRORplot2{kdx, 1};
     
     Zpl(kdx, :) = ZZpl(1, 1:min_len);
     SNRpl(kdx, :) = SSNRpl(1, 1:min_len);
+    SNRmaxpl(kdx, :) = SSNRmaxpl(1, 1:min_len);
     ERRORpl(kdx, :) = EERRORpl(1, 1:min_len);
+    ERRORpl2(kdx, :) = EERRORpl2(1, 1:min_len);
 
 end
 
 Zmean = mean(Zpl);
 SNRmean = mean(SNRpl);
+SNRmaxmean = mean(SNRmaxpl);
 ERRORmean = mean(ERRORpl);
+ERRORmean2 = mean(ERRORpl2);
 
 figure
 plot(it, Zmean, 'LineWidth', 1.5);
@@ -46,19 +56,23 @@ title('Objective Function Convergence');
 grid on
 
 figure
-plot(it, SNRmean, 'LineWidth', 1.5);
+plot(it, SNRmean, it, SNRmaxmean, 'LineWidth', 1.5);
 xlabel('# of iterations');
 ylabel('Radar SNR (dB)');
 title('Radar SNR Convergence');
+legend('Proposed Algorithm', 'Maximum Radar SNR (ideal)');
+xlim([0 50]);
 ylim([28 32]);
 grid on
 
 figure
-semilogy(it, ERRORmean, 'LineWidth', 1.5);
+semilogy(it, ERRORmean, it, ERRORmean2, 'LineWidth', 1.5);
 xlabel('# of iterations');
 ylabel('Error Probability');
 title('Error Probability Convergence');
-ylim([5e-4 1]);
+legend('Proposed Algorithm', 'Equal Power per Subcarrier');
+xlim([0 200]);
+ylim([1e-4 2e-1]);
 grid on
 
 figure

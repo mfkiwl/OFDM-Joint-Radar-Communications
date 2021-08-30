@@ -1,4 +1,4 @@
-function [initSNR, SNRraddB, initErr, ErrorP] = cyclic2 (SNRin)
+function [initSNR, SNRraddB, SNRmaxdB, initErr, ErrorP, ErrorP2] = cyclic2 (SNRin)
 
 % Parameters
 K = 128;                        % # of subcarriers
@@ -33,6 +33,16 @@ end
 y = norm(S'*S - (Q'* Q), 'fro');
 
 z = y;
+
+% Radar Maximum SNR    
+SNRmax = 1 / norm(s).^(-2);
+SNRmaxdB = 10 * log(SNRmax) / log(10);
+
+% Comm Error Probability
+dd = ones(K, 1);
+dd = sqrt(SNRin) * dd / norm(dd);
+SNRcom2 = abs(dd).^2 .* abs(H).^2 / sigma^2;
+ErrorP2 = sum(erfc(SNRcom2 ./ sqrt(2))) ./ K;
 
 % Initial SNR, Initial Error Probability
 SS = S' * S;
