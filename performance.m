@@ -3,39 +3,37 @@ function [] = performance ()
 SNRdB = 0 : 2 : 10;
 SNRin = 10 .^ (SNRdB ./ 10);
 
-initSNR = zeros(100, length(SNRin));
 SNRraddB = zeros(100, length(SNRin));
 SNRmaxdB = zeros(100, length(SNRin));
-initErr = zeros(100, length(SNRin));
+SNReqdB = zeros(100, length(SNRin));
 ErrorP = zeros(100, length(SNRin));
 ErrorP2 = zeros(100, length(SNRin));
 
 for idx = 1 : length(SNRin)
     for jdx = 1 : 100
-        [initSNR(jdx, idx), SNRraddB(jdx, idx), SNRmaxdB(jdx, idx), initErr(jdx, idx), ErrorP(jdx, idx), ErrorP2(jdx, idx)] = cyclic2 (SNRin(idx));
+        [~, SNRraddB(jdx, idx), SNRmaxdB(jdx, idx), SNReqdB(jdx, idx), ~, ErrorP(jdx, idx), ErrorP2(jdx, idx)] = cyclic2 (SNRin(idx));
     end
 end
 
-initSNRplot = mean(initSNR);
 SNRradplot = mean(SNRraddB);
 SNRmaxplot = mean(SNRmaxdB);
-initErrplot = mean(initErr);
+SNReqplot = mean(SNReqdB);
 ErrorPplot = mean(ErrorP);
 ErrorP2plot = mean(ErrorP2);
 
 figure
-plot(SNRdB, initSNRplot, '-*', SNRdB, SNRradplot, '-x', SNRdB, SNRmaxplot, '-o', 'LineWidth', 1.5);
+plot(SNRdB, SNRradplot, '-x', SNRdB, SNRmaxplot, '-o', SNRdB, SNReqplot, 'LineWidth', 1.5);
 xlabel('input SNR (dB)');
 ylabel('Radar SNR (dB)');
-legend('Random Initialization', 'Proposed Algorithm', 'Maximum Radar SNR (ideal)');
+legend('Proposed Algorithm', 'Radar SNR Upper Bound', 'Equal Power per Subcarrier', 'Location', 'northwest');
 title('Radar SNR Performance');
 grid on;
 
 figure
-semilogy(SNRdB, initErrplot, '-*', SNRdB, ErrorPplot, '-*', SNRdB, ErrorP2plot, '-*', 'LineWidth', 1.5);
+semilogy(SNRdB, ErrorPplot, '-x', SNRdB, ErrorP2plot, '-o', 'LineWidth', 1.5);
 xlabel('input SNR (dB)');
 ylabel('BER');
-legend('Random Initialization', 'Proposed Algorithm', 'Equal Power per Subcarrier');
+legend('Proposed Algorithm', 'Equal Power per Subcarrier', 'Location', 'southwest');
 title('Communication BER Performance');
 grid on;
 

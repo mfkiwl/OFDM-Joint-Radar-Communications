@@ -1,4 +1,4 @@
-function [S] = alg1 (SNRin, K, Rrad, rho, Q)
+function [S] = alg1 (SNRin, K, Rrad, rho, Q, d)
 
 P = zeros(K, Rrad);
 p = zeros(K, 1);
@@ -6,14 +6,14 @@ for idx = 1 : Rrad
     P(:, idx) = circshift(Q(:, idx), Rrad-idx);
     p = p + P(:, idx);
 end
-p = fliplr(p);              
+p = flipud(p);              
 p = (1/K) * fft(p);         % p = [p(0) p(1) ... p(K-1)]
 x = p / norm(p);            % x = [x(0) x(1) ... x(K-1)]
 
-d_theta = zeros(K,1);
+d_theta = zeros(K, 1);
 % angle optimization
 for jdx = 1 : K
-    d_theta(jdx, 1) = exp(1i * angle(x(jdx, 1)));
+    d_theta(jdx, 1) = exp(1i * angle(d(jdx, 1)));
 end
     
 % magnitude optimization
@@ -63,8 +63,7 @@ d = d_abs .* d_theta;
 s = K * ifft(d);       
 S = zeros(K, Rrad);
 for mdx = 1 : Rrad
-    S(:, mdx) = circshift(fliplr(s), K-Rrad+mdx);
+    S(:, mdx) = circshift(flipud(s), K-Rrad+mdx);
 end
-
 
 end

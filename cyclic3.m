@@ -26,11 +26,11 @@ Q = sqrt(K)* sqrt(SNRin) * Rand(:, 1:Rrad);            % semiunitary matrix
 s = K * ifft(d);                % OFDM time domain s = [s(0) s(1) ... s(K-1)]
 S = zeros(K, Rrad);
 for idx = 1 : Rrad
-    S(:,idx) = circshift(fliplr(s), K-Rrad+idx);
+    S(:,idx) = circshift(flipud(s), K-Rrad+idx);
 end
 
 % Objective Function
-y = norm(S'*S - (Q'* Q), 'fro');
+y = norm(S'*S - (Q'*Q), 'fro');
 
 jdx = 0;
 z = y;
@@ -42,7 +42,7 @@ ERRORplot = zeros(0, 0);
 
 while jdx < 500
     % #1 : Obtain S given Q
-    S = alg1 (SNRin, K, Rrad, rho, Q);
+    S = alg1 (SNRin, K, Rrad, rho, Q, d);
     
     % #2 : Obtain Q given S
     [U, ~, V] = svd(S');
